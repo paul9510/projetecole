@@ -22,9 +22,27 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Integer> {
     @Query("select e from Etudiant e where e.classe.id is NULL")
     List<Etudiant> findEtudiantSansClasse();
 
+
     // MODIFIE L'ETUDIANT (nom, prenom,photo)
     @Modifying
     @Transactional
     @Query("UPDATE Etudiant SET nom = :nom,prenom = :prenom,photo = :photo WHERE id = :idEtudiant")
     void ModifEtudiantNoteExistante(@Param("nom") String nom,@Param("prenom") String prenom,@Param("photo") String photo,@Param("idEtudiant") int idEtudiant);
+
+    // MODIFIE L'ETUDIANT (nom, prenom,photo,classe)
+    @Modifying
+    @Transactional
+    @Query("UPDATE Etudiant SET nom = :nom,prenom = :prenom,photo = :photo,classe = :classe WHERE id = :idEtudiant")
+    void ModifEtudiantNoteNonExistante(@Param("nom") String nom,@Param("prenom") String prenom,@Param("photo") String photo,@Param("classe") Classe classe,@Param("idEtudiant") int idEtudiant);
+
+    // SUPPRIMER ETUDIANT
+    @Modifying
+    @Transactional
+    @Query("DELETE From Etudiant e WHERE e.id = :idEtudiant")
+    void DeleteEtudiantById(@Param("idEtudiant") int idEtudiant);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Etudiant e SET e.classe.id = :idClasse WHERE e.id = :idEtudiant")
+    void ModifEtudiantSansClasse(@Param("idClasse") int idClasse,@Param("idEtudiant") int idEtudiant);
 }

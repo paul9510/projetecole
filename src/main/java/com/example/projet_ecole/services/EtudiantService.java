@@ -35,6 +35,7 @@ public class EtudiantService {
             throw new RuntimeException("Erreur lors de la création de l'étudiant : "+e);
         }
     }
+
     // RECUPERE UN ETUDIANT SELON SON ID
     public Etudiant findEtudiantId(int idEtudiant){
         return etudiantRepository.findEtudiantId(idEtudiant);
@@ -43,4 +44,25 @@ public class EtudiantService {
     public List<Etudiant> finEtudiantSansClasse(){
         return etudiantRepository.findEtudiantSansClasse();
     }
+
+    //MODIFIE L'ETUDIANT (nom, prenom, photo, Classe) SELON SON ID
+    public void ModifEtudiantNoteNonExistante(String nom, String prenom, String photo, Classe classe,int idEtudiant){
+        etudiantRepository.ModifEtudiantNoteNonExistante(nom,prenom,photo,classe,idEtudiant);
+    }
+
+    //MODIFIE L'ETUDIANT (nom, prenom, photo) SELON SON ID
+    public void ModifEtudiantNoteExistante(String nom, String prenom, String photo,int idEtudiant){
+        etudiantRepository.ModifEtudiantNoteExistante(nom,prenom,photo,idEtudiant);
+    }
+
+    //SUPPRIMER ETUDIANT SELON ID
+    public void DeleteEtudiantById(int idEtudiant){
+        etudiantRepository.DeleteEtudiantById(idEtudiant);
+    }
+
+    // AJOUTER UNE CLASSE A UN ETUDIANT QUI N'EN A PAS
+    public void modifEtudiantSansClasse(int idClasse, int idEtudiant){
+        etudiantRepository.ModifEtudiantSansClasse(idClasse,idEtudiant);
+    }
+
 }
