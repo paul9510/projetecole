@@ -18,4 +18,9 @@ public class NoteService {
     public List<Note> findNoteIdEtudiant(int idEtudiant){
         return noteRepository.findNoteIdEtudiant(idEtudiant);
     }
+
+    //SUPPRIMER NOTES SELON ID DE L'ETUDIANT
+    public void DeleteNoteByEtudiantId(int idEtudiant) {
+        noteRepository.DeleteNotesByIdEtudiant(idEtudiant);
+    }
 }
