@@ -1,0 +1,32 @@
+package com.example.projet_ecole.services;
+
+import com.example.projet_ecole.entities.Classe;
+import com.example.projet_ecole.repositories.ClasseRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ClasseService {
+    private final ClasseRepository classeRepository;
+
+    public ClasseService(ClasseRepository classeRepository) {
+        this.classeRepository = classeRepository;
+    }
+
+    public void ajouterNouvelleClasse(String nom) {
+
+        try {
+            Classe classe = new Classe();
+            classe.setNom(nom);
+            classeRepository.save(classe);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    // RECUPERE UNE CLASSE SELON SON ID
+    public Classe findClasseById(int idClasse){
+        return classeRepository.findClasseId(idClasse);
+    }
+
+}
