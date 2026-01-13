@@ -20,7 +20,7 @@ public class ClasseController {
 
     // Permet d'ajouter une nouvelle classe
     @PostMapping("/add")
-    public ResponseEntity<String> addClasse(@RequestParam("nomClasse") String nomClasse) {
+    public ResponseEntity<?> addClasse(@RequestParam("nomClasse") String nomClasse) {
 
         try {
             if (nomClasse != null) {
