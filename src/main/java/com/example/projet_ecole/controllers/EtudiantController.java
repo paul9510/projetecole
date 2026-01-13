@@ -32,7 +32,7 @@ public class EtudiantController {
     // PERMET DE CREER UN ETUDIANT
     // nom : nom de l'étudiant | prenom : prénom de l'étudiant | photo : lien photo de l'étudiant | id_classe : id de la classe sélectionnée
     @PostMapping("/add")
-    public ResponseEntity<String> createEtudiant(@RequestParam String nom, @RequestParam String prenom, @RequestParam String photo, @RequestParam int id_classe, Model model) {
+    public ResponseEntity<?> createEtudiant(@RequestParam String nom, @RequestParam String prenom, @RequestParam String photo, @RequestParam int id_classe, Model model) {
         try {
             etudiantService.createEtudiant(nom, prenom, photo, id_classe);
         } catch (Exception ex) {
@@ -42,7 +42,7 @@ public class EtudiantController {
 
     //MODIFIE L'ETUDIANT
     @PostMapping("/modif")
-    public ResponseEntity<String> modifEtudiant(@RequestParam String nom, @RequestParam String prenom, @RequestParam String photo, @RequestParam int id_classe,@RequestParam int id_etudiant, Model model) {
+    public ResponseEntity<?> modifEtudiant(@RequestParam String nom, @RequestParam String prenom, @RequestParam String photo, @RequestParam int id_classe,@RequestParam int id_etudiant, Model model) {
         try {
             // On récupère l'étudiant selon l'id
             Etudiant e = etudiantService.findEtudiantId(id_etudiant);
@@ -64,7 +64,7 @@ public class EtudiantController {
 
     //SUPPRIMER ETUDIANT + SES NOTES
     @PostMapping("/supprimer")
-    public ResponseEntity<String> supprimerEtudiant(@RequestParam int id_etudiant, Model model) {
+    public ResponseEntity<?> supprimerEtudiant(@RequestParam int id_etudiant, Model model) {
         try{
             //Suppression étudiant
             etudiantService.DeleteEtudiantById(id_etudiant);
@@ -76,17 +76,22 @@ public class EtudiantController {
         return ResponseEntity.status(201).body("Etudiant supprimer avec succès");
     }
 
+    //RECUPERE LES ETUDIANT SANS CLASSE
     @GetMapping("/etudiantDisponible")
     public ResponseEntity<?> getEtudiantDisponible() {
         try {
+            // RECUPERE UNE LISTE D'ETUDIANTS SANS CLASSE
             List<Etudiant> etudiants = etudiantService.finEtudiantSansClasse();
 
+            // SI CETTE LISTE RETOURNE DES ETUDIANTS ON RENVOIE UN STATUS 200 ET ON MET LA LISTE DANS LE BODY
             if (etudiants != null && !etudiants.isEmpty()) {
                 return ResponseEntity.status(200).body(etudiants);
             } else {
+                // SINON ON RENVOIE UNE ERREUR CAR LA LISTE EST VIDE
                 return ResponseEntity.status(400).body("Aucun étudiant trouvé");
             }
         } catch (Exception e) {
+            // ERREUR SERVEUR
             return ResponseEntity.status(500).body("Erreur serveur : " + e.getMessage());
         }
     }
@@ -95,10 +100,7 @@ public class EtudiantController {
     @PostMapping("/updateClasseEleve")
     public ResponseEntity<?> updateEleveSansClasse(@RequestParam("idClasse") int idClasse, @RequestParam("idEtudiant") int idEtudiant) {
         try {
-            if (idClasse <= 0 || idEtudiant <= 0) {
-                return ResponseEntity.status(400).body("Les identifiants doivent être supérieurs à 0");
-            }
-
+            // FUNCTION POUR MODIFIER LA CLASSE D'UN ETUDIANT
             etudiantService.modifEtudiantSansClasse(idClasse, idEtudiant);
 
             return ResponseEntity.status(200).body("Etudiant modifié avec succès");
