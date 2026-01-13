@@ -38,6 +38,26 @@ public class ClasseController {
         }
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<?> updateClasse(@RequestParam("nomClasse") String nomClasse, @RequestParam("idClasse") int idClasse) {
+        try {
+            classeService.updateClasse(nomClasse, idClasse);
+            return ResponseEntity.status(200).body("Classe modifier avec succes");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteClasse(@RequestParam("idClasse") int idClasse) {
+        try {
+            classeService.deleteClasse(idClasse);
+            return ResponseEntity.status(200).body("Classe supprimer avec succes");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+    }
+
 
 
 
