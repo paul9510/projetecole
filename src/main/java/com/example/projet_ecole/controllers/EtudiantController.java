@@ -2,6 +2,7 @@ package com.example.projet_ecole.controllers;
 
 import com.example.projet_ecole.entities.Classe;
 import com.example.projet_ecole.entities.Etudiant;
+import com.example.projet_ecole.entities.Note;
 import com.example.projet_ecole.repositories.EtudiantRepository;
 import com.example.projet_ecole.services.ClasseService;
 import com.example.projet_ecole.services.EtudiantService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLOutput;
 import java.util.List;
 
 @RestController
@@ -76,6 +78,7 @@ public class EtudiantController {
         return ResponseEntity.status(201).body("Etudiant supprimer avec succès");
     }
 
+
     //RECUPERE LES ETUDIANT SANS CLASSE
     @GetMapping("/etudiantDisponible")
     public ResponseEntity<?> getEtudiantDisponible() {
@@ -97,7 +100,7 @@ public class EtudiantController {
     }
 
     //MET A JOURS LA CLASSE D'UN ELEVE
-    @PostMapping("/updateClasseEleve")
+    @PostMapping("/updateClasseEtudiant")
     public ResponseEntity<?> updateEleveSansClasse(@RequestParam("idClasse") int idClasse, @RequestParam("idEtudiant") int idEtudiant) {
         try {
             // FUNCTION POUR MODIFIER LA CLASSE D'UN ETUDIANT

@@ -41,6 +41,7 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Integer> {
     @Query("DELETE From Etudiant e WHERE e.id = :idEtudiant")
     void DeleteEtudiantById(@Param("idEtudiant") int idEtudiant);
 
+    //MODIFIE LA CLASSE DE L'ETUDIANT
     @Modifying
     @Transactional
     @Query("UPDATE Etudiant e SET e.classe.id = :idClasse WHERE e.id = :idEtudiant")

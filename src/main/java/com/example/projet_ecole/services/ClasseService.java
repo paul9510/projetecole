@@ -24,6 +24,14 @@ public class ClasseService {
 
     }
 
+    public void updateClasse(String nomClasse, int idClasse) {
+        classeRepository.UpdateNomClasse(nomClasse, idClasse);
+    }
+
+    public void deleteClasse(int idClasse) {
+        classeRepository.DeleteClasseById(idClasse);
+    }
+
     // RECUPERE UNE CLASSE SELON SON ID
     public Classe findClasseById(int idClasse){
         return classeRepository.findClasseId(idClasse);
