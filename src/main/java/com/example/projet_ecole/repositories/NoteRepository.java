@@ -1,5 +1,6 @@
 package com.example.projet_ecole.repositories;
 
+import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Etudiant;
 import com.example.projet_ecole.entities.Note;
 import jakarta.transaction.Transactional;
@@ -23,4 +24,19 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     @Transactional
     @Query("DELETE From Note n WHERE n.etudiant.id = :idEtudiant")
     void DeleteNotesByIdEtudiant(@Param("idEtudiant") int idEtudiant);
+
+    //SUPPRIME LES NOTES POSSEDANT L'idDevoir
+    @Modifying
+    @Transactional
+    @Query("DELETE From Note n WHERE n.devoir.id = :idDevoir")
+    void DeleteNoteByIdDevoir(@Param("idDevoir") int idDevoir);
+
+    // RECUPERE LE RELEVER DE NOTE D'UN ETUDIANT PAR SON ID
+    @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(n.etudiant.nom, n.etudiant.prenom, n.valeur, n.devoir.description,n.devoir.matiere.nom) FROM Note n WHERE n.etudiant.id = :idEtudiant")
+    List<EtudiantDevoirNoteDto> findReleveNoteByIdEtudiant(@Param("idEtudiant") int idEtudiant);
+
+
+
+
+
 }

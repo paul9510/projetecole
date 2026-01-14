@@ -1,8 +1,12 @@
 package com.example.projet_ecole.services;
 
+import com.example.projet_ecole.dto.ClassesAllDto;
 import com.example.projet_ecole.entities.Classe;
+import com.example.projet_ecole.entities.Etudiant;
 import com.example.projet_ecole.repositories.ClasseRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ClasseService {
@@ -35,6 +39,14 @@ public class ClasseService {
     // RECUPERE UNE CLASSE SELON SON ID
     public Classe findClasseById(int idClasse){
         return classeRepository.findClasseId(idClasse);
+    }
+
+    public List<ClassesAllDto> findAllClasses() {
+        return classeRepository.findAllClasses();
+    }
+
+    public List<Etudiant>  findAllEtudiantsByIdClasse(int idClasse) {
+        return classeRepository.findAllEtudiantsByIdClasse(idClasse);
     }
 
 }
