@@ -35,6 +35,27 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(n.etudiant.nom, n.etudiant.prenom, n.valeur, n.devoir.description,n.devoir.matiere.nom) FROM Note n WHERE n.etudiant.id = :idEtudiant")
     List<EtudiantDevoirNoteDto> findReleveNoteByIdEtudiant(@Param("idEtudiant") int idEtudiant);
 
+    //PERMET DE RECUPERE LA NOTE D'UN ETUDIANT SELON SON ID ET LE DEVOIR
+    @Query("select n from Note n where n.etudiant.id = :idEtudiant AND n.devoir.id = :idDevoir")
+    Note findNoteIdEtudiantIdDevoir(@Param("idEtudiant") int idEtudiant,@Param("idDevoir") int idDevoir);
+
+    // MODIFIE LA NOTE SELON id (valeur)
+    @Modifying
+    @Transactional
+    @Query("UPDATE Note SET valeur = :valeur WHERE etudiant.id = :idEtudiant AND devoir.id = :idDevoir")
+    void ModifNote(@Param("idEtudiant") int idEtudiant,@Param("idDevoir") int idDevoir,@Param("valeur") double valeur);
+
+    // RECUPERE TOUTES LES NOTES
+    @Query("select n from Note n")
+    List<Note> findToutesLesNotes();
+
+    // RECUPERE LE NOM PRENOM MATIERE ET SA MOYENNE POUR TOUS LES ETUDIANTS AYANT DES NOTES
+    @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(e.nom, e.prenom, AVG(n.valeur), n.devoir.matiere.nom) FROM Note n JOIN Etudiant e ON e.id = n.etudiant.id GROUP BY e.id, e.prenom, e.nom, n.devoir.matiere")
+    List<EtudiantDevoirNoteDto> findMoyenneByMatiere();
+
+    // RECUPERE LE NOM, PRENOM, MOYENNE_GENERALE POUR TOUS LES ETUDIANTS
+    @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(e.nom, e.prenom, AVG(n.valeur)) FROM Note n JOIN n.etudiant e GROUP BY e.id, e.prenom, e.nom")
+    List<EtudiantDevoirNoteDto> findMoyenneGenerale();
 
 
 

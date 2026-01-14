@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MatiereRepository extends JpaRepository<Matiere, Integer> {
 
@@ -27,4 +29,7 @@ public interface MatiereRepository extends JpaRepository<Matiere, Integer> {
     @Transactional
     @Query("DELETE From Matiere m WHERE m.id = :idMatiere")
     void DeleteMatiereByIdMatiere(@Param("idMatiere") int idMatiere);
+
+    @Override
+    List<Matiere> findAll();
 }

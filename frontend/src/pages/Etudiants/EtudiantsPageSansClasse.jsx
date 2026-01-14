@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from "react-hot-toast";
 
-const EtudiantsSansClassePage = () => {
+const EtudiantsPageSansClasse = () => {
     const [etudiantSansClasses, setEtudiantSansClasses] = useState([]);
     const [allClasses, setAllClasses] = useState([]);
     const [selectedClasses, setSelectedClasses] = useState({});
@@ -121,4 +121,4 @@ const EtudiantsSansClassePage = () => {
     );
 };
 
-export default EtudiantsSansClassePage;
+export default EtudiantsPageSansClasse;

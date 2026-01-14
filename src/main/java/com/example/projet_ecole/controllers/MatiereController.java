@@ -2,6 +2,7 @@ package com.example.projet_ecole.controllers;
 
 
 import com.example.projet_ecole.entities.Devoir;
+import com.example.projet_ecole.entities.Matiere;
 import com.example.projet_ecole.services.DevoirService;
 import com.example.projet_ecole.services.MatiereService;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,18 @@ public class MatiereController {
                 return ResponseEntity.status(400).body("Il est impossible de supprimer une matière utilisée dans un devoir");
             }
         } catch (Exception ex) {
-            return ResponseEntity.status(400).body("Erreur lors de la suppression de la matière");        }
+            return ResponseEntity.status(400).body("Erreur lors de la suppression de la matière");
+        }
         return ResponseEntity.status(201).body("Matière supprimée avec succès");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> findAllMatiere() {
+        try {
+            List<Matiere> matieres = matiereService.findAllMatieres();
+            return ResponseEntity.status(200).body(matieres);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server lors de la récupération des moyennes generales " + e.getMessage());
+        }
     }
 }

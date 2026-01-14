@@ -28,7 +28,9 @@ public class EtudiantService {
             Etudiant etudiant = new Etudiant();
             etudiant.setNom(nom);
             etudiant.setPrenom(prenom);
-            etudiant.setPhoto(photo);
+            if (photo != null) {
+                etudiant.setPhoto(photo);
+            }
             etudiant.setClasse(classeRepository.findClasseId(id_classe));
             etudiantRepository.save(etudiant);
         }catch (Exception e){
@@ -50,6 +52,11 @@ public class EtudiantService {
         etudiantRepository.ModifEtudiantNoteNonExistante(nom,prenom,photo,classe,idEtudiant);
     }
 
+    //MODIFIE L'ETUDIANT SI IL N'A PAS DE PHOTO (nom, prenom, Classe) SELON SON ID
+    public void ModifEtudiantNoteNonExistanteNonPhoto(String nom, String prenom, Classe classe,int idEtudiant){
+        etudiantRepository.ModifEtudiantNoteNonExistanteNonPhoto(nom,prenom,classe,idEtudiant);
+    }
+
     //MODIFIE L'ETUDIANT (nom, prenom, photo) SELON SON ID
     public void ModifEtudiantNoteExistante(String nom, String prenom, String photo,int idEtudiant){
         etudiantRepository.ModifEtudiantNoteExistante(nom,prenom,photo,idEtudiant);
@@ -65,4 +72,13 @@ public class EtudiantService {
         etudiantRepository.ModifEtudiantSansClasse(idClasse,idEtudiant);
     }
 
+    //  RECUPERE TOUS LES ETUDIANT
+    public List<Etudiant> findAllEtudiants(){
+        return etudiantRepository.findAll();
+    }
+
+    //SUPPRIME LA CLASSE D'UN ETUDIANT
+    public void DeleteClasseByIdEtudiant(int idEtudiant){
+        etudiantRepository.DeleteClasseByIdEtudiant(idEtudiant);
+    }
 }
