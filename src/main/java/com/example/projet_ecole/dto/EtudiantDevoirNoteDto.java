@@ -22,6 +22,22 @@ public class EtudiantDevoirNoteDto {
         this.matiere = matiere;
     }
 
+
+    public EtudiantDevoirNoteDto(String nomEtudiant, String prenomEtudiant, Double valeur,String matiere) {
+        this.nomEtudiant = nomEtudiant;
+        this.prenomEtudiant = prenomEtudiant;
+        this.valeur = BigDecimal.valueOf(valeur);
+        this.matiere = matiere;
+    }
+
+    public EtudiantDevoirNoteDto(String nomEtudiant, String prenomEtudiant, Double valeur) {
+        this.nomEtudiant = nomEtudiant;
+        this.prenomEtudiant = prenomEtudiant;
+        this.valeur = BigDecimal.valueOf(valeur);
+    }
+
+
+
     public String getNomEtudiant() {
         return nomEtudiant;
     }
@@ -52,6 +68,14 @@ public class EtudiantDevoirNoteDto {
 
     public void setDescriptionDevoir(String descriptionDevoir) {
         this.descriptionDevoir = descriptionDevoir;
+    }
+
+    public String getMatiere() {
+        return matiere;
+    }
+
+    public void setMatiere(String matiere) {
+        this.matiere = matiere;
     }
 
     @Override

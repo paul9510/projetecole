@@ -22,9 +22,11 @@ public class Classe {
     private String nom;
 
     @OneToMany(mappedBy = "classe")
+    @JsonIgnore
     private Set<Devoir> devoirs = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "classe")
+    @JsonIgnore
     private Set<Etudiant> etudiants = new LinkedHashSet<>();
 
 }

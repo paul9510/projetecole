@@ -32,7 +32,6 @@ public class Etudiant {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "classe_id")
-    @JsonIgnore
     private Classe classe;
 
     @OneToMany(mappedBy = "etudiant")

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from "react-hot-toast";
-import CreateClasseForm from "../../components/forms/CreateClasseForm.jsx";
+import ClasseForm from "../../components/forms/ClasseForm.jsx";
 import {Link} from "react-router-dom";
-import EtudiantsSansClassePage from "../Etudiants/EtudiantsSansClassePage.jsx";
+import EtudiantsPageSansClasse from "../Etudiants/EtudiantsPageSansClasse.jsx";
 
-const CreateClassePage = () => {
+const ClassePage = () => {
     const [classes, setClasses] = useState([]);
+    const [editData, setEditData] = useState(null);
+
 
     // Fonction pour charger les classes depuis le backend
     const fetchClasses = async () => {
@@ -45,7 +47,11 @@ const CreateClassePage = () => {
                 <Link to={"/etudiant/disponible"} className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">Voir les élèves sans classes</Link>
             </div>
 
-            <CreateClasseForm onClasseAdded={fetchClasses} />
+            <ClasseForm
+                onClasseAdded={fetchClasses}
+                editData={editData}
+                setEditData={setEditData}
+            />
 
             <div className="bg-white shadow-md rounded-2xl border border-slate-200 overflow-hidden">
                 <table className="w-full text-left">
@@ -58,15 +64,16 @@ const CreateClassePage = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                     {classes.map((c) => (
-                        <tr key={c.idClasse} className="hover:bg-slate-50 transition-colors">
-                            <td className="p-4 text-slate-400 text-sm">#{c.idClasse}</td>
-                            <td className="p-4 font-medium text-slate-700">{c.nom}</td>
+                        <tr key={c.idClasse}>
+                            <td className="p-4">{c.idClasse}</td>
+                            <td className="p-4 font-medium">{c.nom}</td>
                             <td className="p-4 text-right space-x-2">
-                                <button className="text-blue-600 hover:text-blue-800 font-medium">Modifier</button>
                                 <button
-                                    onClick={() => handleDelete(c.idClasse)}
-                                    className="text-red-600 hover:text-red-800 font-medium"
-                                >
+                                    onClick={() => setEditData(c)}
+                                    className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer">
+                                    Modifier
+                                </button>
+                                <button onClick={() => handleDelete(c.idClasse)} className="text-red-600 cursor-pointer">
                                     Supprimer
                                 </button>
                             </td>
@@ -79,4 +86,4 @@ const CreateClassePage = () => {
     );
 };
 
-export default CreateClassePage;
+export default ClassePage;

@@ -1,8 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from "./pages/Home.jsx";
-import CreateClassePage from "./pages/Classes/CreateClassePage.jsx";
+import ClassePage from "./pages/Classes/ClassePage.jsx";
 import {Toaster} from "react-hot-toast";
-import EtudiantsSansClassePage from "./pages/Etudiants/EtudiantsSansClassePage.jsx";
+import EtudiantsPageSansClasse from "./pages/Etudiants/EtudiantsPageSansClasse.jsx";
+import EtudiantAll from "./pages/Etudiants/EtudiantAll.jsx";
+import EtudiantPage from "./pages/Etudiants/EtudiantPage.jsx";
+import EtudiantAdd from "./pages/Etudiants/EtudiantAdd.jsx";
+import NoteParMatierePage from "./pages/Notes/NoteParMatierePage.jsx";
+import NoteMoyenneGeneralePage from "./pages/Notes/NoteMoyenneGeneralePage.jsx";
+import Matiere from "./pages/Matieres/Matiere.jsx";
+import MatiereForm from "./components/forms/MatiereForm.jsx";
 
 function App() {
     return (
@@ -16,7 +23,10 @@ function App() {
 
                             {/* On pointe vers la racine de chaque catégorie */}
                             <Link to="/classe" className="text-gray-600 font-bold hover:text-indigo-600">Classes</Link>
-                            <Link to="/etudiant/disponible" className="text-gray-600 font-bold hover:text-indigo-600">Étudiants Dispos</Link>
+                            <Link to="/etudiant/allEtudiant" className="text-gray-600 font-bold hover:text-indigo-600">Étudiants</Link>
+                            <Link to="/note/moyenneParMatiere" className="text-gray-600 font-bold hover:text-indigo-600">Notes</Link>
+                            <Link to="/note/moyenneGenerale" className="text-gray-600 font-bold hover:text-indigo-600">NotesGenerale</Link>
+                            <Link to="/matiere/all" className="text-gray-600 font-bold hover:text-indigo-600">Matieres</Link>
                         </div>
                     </nav>
 
@@ -26,14 +36,29 @@ function App() {
 
                             {/* --- ROUTES CLASSES --- */}
                             <Route path="/classe">
-                                <Route index element={<CreateClassePage />} />
+                                <Route index element={<ClassePage />} />
                                 {/* Tu pourras ajouter plus tard : <Route path="liste" element={<ListeClasses />} /> */}
+                            </Route>
+
+                            <Route path="/note">
+                                <Route path="moyenneParMatiere" element={<NoteParMatierePage />} />
+                                <Route path="moyenneGenerale" element={<NoteMoyenneGeneralePage />} />
+                                {/* Tu pourras ajouter plus tard : <Route path="liste" element={<ListeClasses />} /> */}
+                            </Route>
+
+                            <Route path="/matiere">
+                                <Route path="all" element={<Matiere />} />
+                                <Route path="add" element={<MatiereForm />} />
+                                <Route path="edit/:id" element={<MatiereForm />} />
                             </Route>
 
                             {/* --- ROUTES ETUDIANTS --- */}
                             <Route path="/etudiant">
                                 {/* L'URL sera : /etudiant/disponible */}
-                                <Route path="disponible" element={<EtudiantsSansClassePage />} />
+                                <Route path="disponible" element={<EtudiantsPageSansClasse />} />
+                                <Route path="allEtudiant" element={<EtudiantAll />} />
+                                <Route path="edit/:id" element={<EtudiantPage />} />
+                                <Route path="add" element={<EtudiantAdd />} />
                                 {/* Tu pourras ajouter plus tard : <Route path="bulletin/:id" element={<Bulletin />} /> */}
                             </Route>
                         </Routes>

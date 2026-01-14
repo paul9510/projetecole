@@ -22,6 +22,8 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Integer> {
     @Query("select e from Etudiant e where e.classe.id is NULL")
     List<Etudiant> findEtudiantSansClasse();
 
+    @Override
+    List<Etudiant> findAll();
 
     // MODIFIE L'ETUDIANT (nom, prenom,photo)
     @Modifying
@@ -35,6 +37,12 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Integer> {
     @Query("UPDATE Etudiant SET nom = :nom,prenom = :prenom,photo = :photo,classe = :classe WHERE id = :idEtudiant")
     void ModifEtudiantNoteNonExistante(@Param("nom") String nom,@Param("prenom") String prenom,@Param("photo") String photo,@Param("classe") Classe classe,@Param("idEtudiant") int idEtudiant);
 
+    // MODIFIE L'ETUDIANT SI IL N'A PAS DE PHOTO (nom, prenom,classe)
+    @Modifying
+    @Transactional
+    @Query("UPDATE Etudiant SET nom = :nom,prenom = :prenom,classe = :classe WHERE id = :idEtudiant")
+    void ModifEtudiantNoteNonExistanteNonPhoto(@Param("nom") String nom,@Param("prenom") String prenom,@Param("classe") Classe classe,@Param("idEtudiant") int idEtudiant);
+
     // SUPPRIMER ETUDIANT
     @Modifying
     @Transactional
@@ -46,4 +54,12 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Integer> {
     @Transactional
     @Query("UPDATE Etudiant e SET e.classe.id = :idClasse WHERE e.id = :idEtudiant")
     void ModifEtudiantSansClasse(@Param("idClasse") int idClasse,@Param("idEtudiant") int idEtudiant);
+
+    // SUPPRIMER CLASSE D'UN ETUDIANT
+    @Modifying
+    @Transactional
+    @Query("UPDATE Etudiant e SET e.classe = NULL WHERE e.id = :idEtudiant")
+    void DeleteClasseByIdEtudiant(@Param("idEtudiant") int idEtudiant);
+
+
 }

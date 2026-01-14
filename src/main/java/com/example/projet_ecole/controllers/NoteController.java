@@ -31,4 +31,58 @@ public class NoteController {
         }
 
     }
+
+    // CREATION D'UNE NOTE
+    @PostMapping("/add")
+    public ResponseEntity<?> createNote(@RequestParam("id_etudiant") int id_etudiant,@RequestParam("idDevoir") int idDevoir,@RequestParam("valeur") double valeur) {
+        try {
+            if (valeur <= 20.0 && valeur >= 0.0) {
+                noteService.createNote(id_etudiant,idDevoir,valeur);
+            }
+            else {
+                return ResponseEntity.status(500).body("La note doit être située entre 0.0 et 20.0");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+        return ResponseEntity.status(200).body("Création de la note effectuée avec succès");
+    }
+
+    // MODIFIE LA NOTE D'UN ETUDIANT SUR UN DEVOIR
+    @PostMapping("/modif")
+    public ResponseEntity<?> modifNote(@RequestParam("id_etudiant") int id_etudiant,@RequestParam("idDevoir") int idDevoir,@RequestParam("valeur") double valeur) {
+        try {
+            if (valeur <= 20.0 && valeur >= 0.0) {
+                noteService.modifNote(id_etudiant, idDevoir, valeur);
+            }
+            else {
+                return ResponseEntity.status(500).body("La note doit être située entre 0.0 et 20.0");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+        return ResponseEntity.status(200).body("Modification de la note effectuée avec succès");
+    }
+
+    @GetMapping("/moyenneByMatiere")
+    public ResponseEntity<?> moyenneByMatiere() {
+        try {
+            List<EtudiantDevoirNoteDto> moyennesByMatieres = noteService.findMoyenneByMatiere();
+            return ResponseEntity.status(200).body(moyennesByMatieres);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server lors de la récupération des moyennes par matieres " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/moyenneGenerale")
+    public ResponseEntity<?> moyenneGenerale() {
+        try {
+            List<EtudiantDevoirNoteDto> moyennesGenerales = noteService.findMoyenneGenerale();
+            return ResponseEntity.status(200).body(moyennesGenerales);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server lors de la récupération des moyennes generales " + e.getMessage());
+        }
+    }
 }

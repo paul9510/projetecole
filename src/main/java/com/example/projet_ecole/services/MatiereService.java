@@ -6,6 +6,8 @@ import com.example.projet_ecole.entities.Matiere;
 import com.example.projet_ecole.repositories.MatiereRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MatiereService {
 
@@ -38,5 +40,9 @@ public class MatiereService {
     // SUPPRIME LA MATIERE CORRESPONDANT A L'ID
     public void DeleteMatiereByIdMatiere(int idMatiere) {
         matiereRepository.DeleteMatiereByIdMatiere(idMatiere);
+    }
+
+    public List<Matiere> findAllMatieres(){
+        return matiereRepository.findAll();
     }
 }

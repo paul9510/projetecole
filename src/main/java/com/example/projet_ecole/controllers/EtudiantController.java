@@ -57,7 +57,12 @@ public class EtudiantController {
                 }
                 //SINON
                 else {
-                    etudiantService.ModifEtudiantNoteNonExistante(nom,prenom,photo,classeService.findClasseById(id_classe),id_etudiant);
+                    if (photo != null) {
+                        etudiantService.ModifEtudiantNoteNonExistante(nom, prenom, photo, classeService.findClasseById(id_classe), id_etudiant);
+                    }
+                    else {
+                        etudiantService.ModifEtudiantNoteNonExistanteNonPhoto(nom,prenom,classeService.findClasseById(id_classe), id_etudiant);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -77,6 +82,18 @@ public class EtudiantController {
             return ResponseEntity.status(500).body("Erreur lors de la suppression de l'étudiant");
         }
         return ResponseEntity.status(201).body("Etudiant supprimer avec succès");
+    }
+
+    //SUPPRIMER CLASSE DE L'ETUDIANT
+    @PostMapping("/supprimer/classe")
+    public ResponseEntity<?> supprimerClasseEtudiant(@RequestParam int id_etudiant) {
+        try {
+            etudiantService.DeleteClasseByIdEtudiant(id_etudiant);
+        }
+        catch (Exception ex){
+            return ResponseEntity.status(500).body("Erreur lors de la suppression de la classe de l'étudiant "+ex);
+        }
+        return ResponseEntity.status(201).body("Classe de l'étudiant supprimée avec succès");
     }
 
 
@@ -114,6 +131,20 @@ public class EtudiantController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllEtudiants() {
+        try {
+            List<Etudiant> etudiants = etudiantService.findAllEtudiants();
+
+            if (etudiants.isEmpty()) {
+                return ResponseEntity.status(404).body("Aucuns etudiants trouvé.");
+            }
+            return ResponseEntity.status(200).body(etudiants);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur lors de la modification : " + e.getMessage());
+        }
+    }
 
 
 }
