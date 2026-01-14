@@ -1,5 +1,6 @@
 package com.example.projet_ecole.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,10 +41,12 @@ public class Devoir {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "classe_id", nullable = false)
+    @JsonIgnore
     private Classe classe;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "matiere_id", nullable = false)
+    @JsonIgnore
     private Matiere matiere;
 
     @OneToMany(mappedBy = "devoir")

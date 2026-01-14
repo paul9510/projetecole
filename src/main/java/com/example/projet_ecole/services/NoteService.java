@@ -1,5 +1,6 @@
 package com.example.projet_ecole.services;
 
+import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Note;
 import com.example.projet_ecole.repositories.NoteRepository;
 import org.springframework.stereotype.Service;
@@ -22,5 +23,14 @@ public class NoteService {
     //SUPPRIMER NOTES SELON ID DE L'ETUDIANT
     public void DeleteNoteByEtudiantId(int idEtudiant) {
         noteRepository.DeleteNotesByIdEtudiant(idEtudiant);
+    }
+
+    public List<EtudiantDevoirNoteDto> getReleveParEtudiant(int idEtudiant) {
+        return noteRepository.findReleveNoteByIdEtudiant(idEtudiant);
+    }
+
+    //SUPPRIMER NOTE SELON L'idDevoir
+    public void DeleteNoteByIdDevoir(int idDevoir) {
+        noteRepository.DeleteNoteByIdDevoir(idDevoir);
     }
 }
