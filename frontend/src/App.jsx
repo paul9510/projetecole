@@ -10,6 +10,9 @@ import NoteParMatierePage from "./pages/Notes/NoteParMatierePage.jsx";
 import NoteMoyenneGeneralePage from "./pages/Notes/NoteMoyenneGeneralePage.jsx";
 import Matiere from "./pages/Matieres/Matiere.jsx";
 import MatiereForm from "./components/forms/MatiereForm.jsx";
+import Devoir from "./pages/Devoirs/Devoir.jsx";
+import DevoirForm from "./components/forms/DevoirForm.jsx";
+import NotationForm from "./components/forms/NotationForm.jsx";
 
 function App() {
     return (
@@ -24,13 +27,15 @@ function App() {
                             {/* On pointe vers la racine de chaque catégorie */}
                             <Link to="/classe" className="text-gray-600 font-bold hover:text-indigo-600">Classes</Link>
                             <Link to="/etudiant/allEtudiant" className="text-gray-600 font-bold hover:text-indigo-600">Étudiants</Link>
+                            <Link to="/matiere/all" className="text-gray-600 font-bold hover:text-indigo-600">Matieres</Link>
+                            <Link to="/devoir/all" className="text-gray-600 font-bold hover:text-indigo-600">Devoirs</Link>
                             <Link to="/note/moyenneParMatiere" className="text-gray-600 font-bold hover:text-indigo-600">Notes</Link>
                             <Link to="/note/moyenneGenerale" className="text-gray-600 font-bold hover:text-indigo-600">NotesGenerale</Link>
-                            <Link to="/matiere/all" className="text-gray-600 font-bold hover:text-indigo-600">Matieres</Link>
+
                         </div>
                     </nav>
 
-                    <div className="max-w-4xl mx-auto p-4">
+                    <div className="max-w-6xl mx-auto p-4">
                         <Routes>
                             <Route path="/" element={<Home />} />
 
@@ -50,6 +55,13 @@ function App() {
                                 <Route path="all" element={<Matiere />} />
                                 <Route path="add" element={<MatiereForm />} />
                                 <Route path="edit/:id" element={<MatiereForm />} />
+                            </Route>
+
+                            <Route path="/devoir">
+                                <Route path="all" element={<Devoir />} />
+                                <Route path="add" element={<DevoirForm />} />
+                                <Route path="edit/:id" element={<DevoirForm />} />
+                                <Route path="notation/:id" element={<NotationForm />} />
                             </Route>
 
                             {/* --- ROUTES ETUDIANTS --- */}
