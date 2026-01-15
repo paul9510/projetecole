@@ -12,6 +12,7 @@ public class DevoirNoteDto {
         this.nom = nom;
         this.prenom = prenom;
         this.valeur = valeur;
+
     }
 
     public String getNom() {

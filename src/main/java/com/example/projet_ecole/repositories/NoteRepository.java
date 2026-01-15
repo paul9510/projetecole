@@ -62,6 +62,9 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(e.nom, e.prenom, AVG(n.valeur)) FROM Note n JOIN n.etudiant e GROUP BY e.id, e.prenom, e.nom")
     List<EtudiantDevoirNoteDto> findMoyenneGenerale();
 
+    @Query("SELECT new com.example.projet_ecole.dto.DevoirNoteDto(e.nom, e.prenom, n.valeur) FROM Etudiant e LEFT JOIN Note n ON n.etudiant.id = e.id AND n.devoir.id = :idDevoir WHERE e.classe.id = :idClasse")
+    List<DevoirNoteDto> findNoteByDevoirByClasse(@Param("idDevoir") int idDevoir, @Param("idClasse") int idClasse);
+
 
 
 

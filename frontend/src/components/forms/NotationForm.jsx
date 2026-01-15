@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from "react-hot-toast";
-import { Save, ArrowLeft, User, CheckCircle2, GraduationCap, ClipboardCheck } from 'lucide-react';
+import { Save, ArrowLeft, GraduationCap, ClipboardCheck, CheckCircle2 } from 'lucide-react';
 
 const NotationForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
     const [devoir, setDevoir] = useState(null);
-    const [etudiants, setEtudiants] = useState([]);
+    const [registre, setRegistre] = useState([]);
     const [notes, setNotes] = useState({});
 
     useEffect(() => {
-        const loadInitialData = async () => {
+        const loadData = async () => {
             try {
+                // 1. Charger les infos du devoir
                 const resM = await axios.get("http://localhost:8080/matiere/all");
                 let currentD = null;
                 resM.data.forEach(m => {
@@ -23,191 +24,149 @@ const NotationForm = () => {
                 });
                 setDevoir(currentD);
 
-                const resE = await axios.get("http://localhost:8080/etudiant/all");
-                setEtudiants(resE.data);
+                // 2. Charger le registre (Notes + Étudiants de la classe via ta requête LEFT JOIN)
+                const params = new URLSearchParams();
+                params.append('idDevoir', id);
 
-                const formData = new FormData();
-                formData.append('idDevoir', id);
+                const resN = await axios.post("http://localhost:8080/note/findNoteByDevoirByClasse", params);
 
-                try {
-                    const resN = await axios.post("http://localhost:8080/note/allNotesByIdDevoir", formData);
+                if (resN.data && Array.isArray(resN.data)) {
+                    setRegistre(resN.data);
+
                     const map = {};
-                    if (resN.data && Array.isArray(resN.data)) {
-                        resE.data.forEach(etud => {
-                            const n = resN.data.find(note => note.nom === etud.nom && note.prenom === etud.prenom);
-                            if (n) map[etud.id] = n.valeur;
-                        });
-                    }
+                    resN.data.forEach((item) => {
+                        if (item.valeur !== null) {
+                            map[`${item.nom}-${item.prenom}`] = item.valeur;
+                        }
+                    });
                     setNotes(map);
-                } catch (e) {
-                    console.log("Mode saisie : aucune note existante.");
                 }
             } catch (err) {
-                toast.error("Erreur de chargement");
+                toast.error("Erreur de synchronisation");
             }
         };
-        loadInitialData();
+        loadData();
     }, [id]);
 
     const handleSave = async () => {
-        const loadToast = toast.loading("Synchronisation du registre...");
+        const loadToast = toast.loading("Enregistrement...");
         try {
-            const entries = Object.entries(notes);
-            const promises = entries.map(([etudiantId, valeur]) => {
-                if (valeur === "" || valeur === null) return null;
+            const resE = await axios.get("http://localhost:8080/etudiant/all");
+
+            const promises = Object.entries(notes).map(([key, valeur]) => {
+                const [nom, prenom] = key.split('-');
+                const etudiant = resE.data.find(e => e.nom === nom && e.prenom === prenom);
+
+                if (!etudiant) return null;
 
                 const params = new URLSearchParams();
-                params.append('id_etudiant', parseInt(etudiantId));
-                params.append('idDevoir', parseInt(id));
-                params.append('valeur', parseFloat(valeur));
+                params.append('id_etudiant', etudiant.id);
+                params.append('idDevoir', id);
+                params.append('valeur', valeur);
 
-                return axios.post("http://localhost:8080/note/add", params, {
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" }
-                });
+                return axios.post("http://localhost:8080/note/add", params);
             });
 
-            const validPromises = promises.filter(p => p !== null);
-            if (validPromises.length === 0) {
-                toast.dismiss(loadToast);
-                return toast.error("Aucune note à enregistrer");
-            }
-
-            await Promise.all(validPromises);
+            await Promise.all(promises.filter(p => p !== null));
             toast.dismiss(loadToast);
-            toast.success("Registre mis à jour avec succès !");
+            toast.success("Notes enregistrées avec succès !");
             navigate("/devoir/all");
         } catch (err) {
             toast.dismiss(loadToast);
-            toast.error("Erreur serveur lors de l'enregistrement");
+            toast.error("Erreur lors de la sauvegarde");
         }
     };
 
-    if (!devoir) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
-            <div className="animate-pulse flex flex-col items-center gap-4">
-                <div className="h-12 w-12 bg-indigo-200 rounded-full"></div>
-                <div className="h-4 w-32 bg-slate-200 rounded"></div>
-            </div>
-        </div>
-    );
+    if (!devoir) return <div className="p-20 text-center font-black text-slate-400 uppercase">Synchronisation...</div>;
 
     return (
-        <div className="p-6 md:p-12 bg-[#F8FAFC] min-h-screen font-sans">
-            <div className="max-w-5xl mx-auto">
-
-                {/* Header stylisé */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-                    <div className="relative">
-                        <div className="absolute -left-6 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-full"></div>
-                        <div className="flex items-center gap-3 mt-3">
-                            <span className="bg-indigo-100 text-indigo-700 text-[15px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
-                                {devoir.matiereNom}
-                            </span>
-                            <span className="text-slate-400 text-l font-medium">
-                                {devoir.description}
-                            </span>
-                        </div>
+        <div className="p-10 bg-slate-50 min-h-screen">
+            <div className="max-w-4xl mx-auto">
+                <div className="flex justify-between items-center mb-10">
+                    <div className="border-l-4 border-indigo-600 pl-5">
+                        <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tighter leading-none">
+                            Notation <span className="text-indigo-600">{devoir.classe?.nom || "Classe"}</span>
+                        </h1>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">{devoir.matiereNom}</span>
+                            {devoir.description}
+                        </p>
                     </div>
-
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="group flex items-center gap-2 text-slate-400 hover:text-indigo-600 transition-all duration-300 font-bold text-xs uppercase tracking-widest"
-                    >
-                        <div className="p-2 rounded-full group-hover:bg-indigo-50 transition-colors">
-                            <ArrowLeft size={18} />
-                        </div>
-                        Retour
+                    <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-indigo-600 font-bold uppercase text-[10px] flex items-center gap-2 transition-all group">
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Retour
                     </button>
                 </div>
 
-                {/* Card Principal */}
-                <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
-                    <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white">
-                        <div className="flex items-center gap-3 text-slate-800">
-                            <ClipboardCheck className="text-indigo-600" size={24} />
-                            <h2 className="font-bold text-lg">Liste des étudiants</h2>
+                <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-8 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white rounded-lg shadow-sm border border-slate-100">
+                                <ClipboardCheck className="text-indigo-600" size={20} />
+                            </div>
+                            <div>
+                                <h2 className="font-bold text-slate-700 text-sm">Registre d'évaluation</h2>
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{devoir.classe?.nom || "Promotion"}</p>
+                            </div>
                         </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                            {etudiants.length} inscrits
-                        </span>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                            <tr className="bg-slate-50/50">
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Identité de l'élève</th>
-                                <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Évaluation (/20)</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                            {etudiants.map((e) => (
-                                <tr key={e.id} className="group hover:bg-slate-50/80 transition-all duration-200">
-                                    <td className="px-10 py-6">
-                                        <div className="flex items-center gap-5">
-                                            <div className="relative">
-                                                <div className="w-12 h-12 bg-white border-2 border-slate-100 rounded-2xl flex items-center justify-center text-slate-700 font-black text-lg group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all shadow-sm">
-                                                    {e.nom.charAt(0)}
-                                                </div>
-                                                {notes[e.id] && (
-                                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white"></div>
-                                                )}
+                    <table className="w-full text-left">
+                        <thead className="bg-white border-b border-slate-100">
+                        <tr>
+                            <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Étudiant</th>
+                            <th className="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Note / 20</th>
+                        </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                        {registre.map((item, index) => {
+                            const key = `${item.nom}-${item.prenom}`;
+                            return (
+                                <tr key={index} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="px-10 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 bg-white border border-slate-100 text-indigo-600 rounded-xl flex items-center justify-center font-black uppercase shadow-sm">
+                                                {item.nom.charAt(0)}
                                             </div>
                                             <div>
-                                                <p className="font-extrabold text-slate-800 uppercase text-sm tracking-tight">{e.nom} {e.prenom}</p>
+                                                <p className="font-bold text-slate-800 uppercase text-sm leading-none">{item.nom} {item.prenom}</p>
                                                 <div className="flex items-center gap-1.5 mt-1">
                                                     <GraduationCap size={12} className="text-indigo-400" />
-                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                                        {e.classe?.nom || "Section libre"}
-                                                    </p>
+                                                    <span className="text-indigo-500 text-[9px] font-black uppercase tracking-wider italic">
+                                                        {devoir.classe?.nom || "Classe associée"}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-10 py-6">
-                                        <div className="flex items-center justify-end gap-4">
-                                            <div className="relative group/input">
-                                                <input
-                                                    type="number" step="0.5" min="0" max="20"
-                                                    value={notes[e.id] || ""}
-                                                    onChange={(ev) => setNotes({...notes, [e.id]: ev.target.value})}
-                                                    placeholder="--"
-                                                    className="w-32 p-4 bg-slate-50 border-2 border-transparent rounded-2xl text-center font-mono font-black text-xl text-slate-800 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all placeholder:text-slate-200 shadow-inner"
-                                                />
-                                                <span className="absolute -bottom-6 left-0 right-0 text-center text-[9px] font-black text-indigo-400 opacity-0 group-hover/input:opacity-100 transition-opacity">PTS</span>
-                                            </div>
-                                            <div className="w-8 flex justify-center">
-                                                {notes[e.id] ? (
-                                                    <CheckCircle2 size={22} className="text-emerald-500 animate-in zoom-in duration-300" />
-                                                ) : (
-                                                    <div className="w-5 h-5 rounded-full border-2 border-dashed border-slate-200"></div>
-                                                )}
+                                    <td className="px-10 py-5 text-right">
+                                        <div className="flex items-center justify-end gap-3">
+                                            <input
+                                                type="number" step="0.5" min="0" max="20"
+                                                value={notes[key] || ""}
+                                                onChange={(ev) => setNotes({...notes, [key]: ev.target.value})}
+                                                placeholder="--"
+                                                className="w-24 p-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono font-black text-lg focus:bg-white focus:border-indigo-600 outline-none transition-all shadow-inner"
+                                            />
+                                            <div className="w-6">
+                                                {notes[key] && <CheckCircle2 size={18} className="text-emerald-500 animate-in zoom-in" />}
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            );
+                        })}
+                        </tbody>
+                    </table>
 
-                    {/* Footer d'action */}
-                    <div className="p-10 bg-slate-50/50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 text-indigo-600">
-                                <Save size={20} />
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-slate-700">Enregistrement automatique</p>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Vérifiez bien les notes avant de valider</p>
-                            </div>
-                        </div>
-
+                    <div className="p-10 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
+                            Total : {registre.length} étudiants dans la classe {devoir.classe?.nom}
+                        </span>
                         <button
                             onClick={handleSave}
-                            className="w-full md:w-auto bg-slate-900 hover:bg-indigo-600 text-white px-12 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-indigo-200 hover:shadow-indigo-400 transition-all duration-300 active:scale-95 flex items-center justify-center gap-3"
+                            className="bg-slate-900 hover:bg-indigo-600 text-white px-12 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl transition-all active:scale-95 flex items-center gap-2"
                         >
-                            Finaliser la session
+                            <Save size={16}/> Enregistrer le registre
                         </button>
                     </div>
                 </div>

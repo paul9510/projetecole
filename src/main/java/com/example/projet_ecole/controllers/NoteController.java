@@ -3,6 +3,7 @@ package com.example.projet_ecole.controllers;
 import com.example.projet_ecole.dto.DevoirNoteDto;
 import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Note;
+import com.example.projet_ecole.services.DevoirService;
 import com.example.projet_ecole.services.NoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -16,10 +17,12 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
+    private final DevoirService devoirService;
 
 
-    public NoteController(NoteService noteService) {
+    public NoteController(NoteService noteService, DevoirService devoirService) {
         this.noteService = noteService;
+        this.devoirService = devoirService;
     }
 
     @PostMapping("/releveNote")
@@ -110,6 +113,18 @@ public class NoteController {
             }
             return ResponseEntity.status(200).body(allNotesByIdDevoir);
 
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/findNoteByDevoirByClasse")
+    public ResponseEntity<?> findNoteByDevoirByClasse(@RequestParam("idDevoir") int idDevoir) {
+
+        try {
+
+            List<DevoirNoteDto> listeDevoirNotesByClasse =  noteService.findNoteByDevoirByClasse(idDevoir,devoirService.findDevoirId(idDevoir).getClasse().getId());
+            return ResponseEntity.status(200).body(listeDevoirNotesByClasse);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
         }

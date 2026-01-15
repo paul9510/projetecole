@@ -95,5 +95,9 @@ public class NoteService {
         return noteRepository.findNoteByDevoirId(idDevoir);
     }
 
+    public List<DevoirNoteDto> findNoteByDevoirByClasse(int idDevoir, int idClasse) {
+        return noteRepository.findNoteByDevoirByClasse(idDevoir, idClasse);
+    }
+
 
 }
