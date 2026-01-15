@@ -114,7 +114,7 @@ const DevoirForm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* CLASSE */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Classe</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Classes</label>
                                 <select
                                     disabled={hasNotes}
                                     value={idClasse}
@@ -129,7 +129,7 @@ const DevoirForm = () => {
 
                             {/* MATIÈRE */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Discipline</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Matières</label>
                                 <select
                                     disabled={hasNotes}
                                     value={idMatiere}
@@ -159,7 +159,7 @@ const DevoirForm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* CATEGORIE */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Format</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Catégorie</label>
                                 <select
                                     value={categorie}
                                     onChange={(e) => setCategorie(e.target.value)}
