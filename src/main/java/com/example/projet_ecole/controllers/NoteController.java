@@ -1,5 +1,6 @@
 package com.example.projet_ecole.controllers;
 
+import com.example.projet_ecole.dto.DevoirNoteDto;
 import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Note;
 import com.example.projet_ecole.services.NoteService;
@@ -83,6 +84,34 @@ public class NoteController {
         }
         catch (Exception e) {
             return ResponseEntity.status(500).body("Erreur Server lors de la récupération des moyennes generales " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> allNotes() {
+        try {
+            List<Note> allNotes = noteService.findToutesLesNotes();
+            if (allNotes.isEmpty()) {
+                return ResponseEntity.status(404).body("Aucunes notes");
+            }
+            return ResponseEntity.status(200).body(allNotes);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/allNotesByIdDevoir")
+    public ResponseEntity<?> allNotesByIdDevoir(@RequestParam("idDevoir") int idDevoir) {
+        try {
+            List<DevoirNoteDto> allNotesByIdDevoir = noteService.findNoteByDevoirId(idDevoir);
+
+            if (allNotesByIdDevoir.isEmpty()) {
+                return ResponseEntity.status(404).body("Aucunes notes");
+            }
+            return ResponseEntity.status(200).body(allNotesByIdDevoir);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur Server " + e.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.projet_ecole.services;
 
+import com.example.projet_ecole.dto.DevoirNoteDto;
 import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Etudiant;
 import com.example.projet_ecole.entities.Note;
@@ -33,11 +34,20 @@ public class NoteService {
     //CREER UNE NOTE
     public void createNote(int idEtudiant,int idDevoir,double valeur){
         try {
-            Note note = new Note();
-            note.setValeur(BigDecimal.valueOf(valeur));
-            note.setEtudiant(etudiantRepository.findEtudiantId(idEtudiant));
-            note.setDevoir(devoirRepository.findDevoirId(idDevoir));
-            noteRepository.save(note);
+
+            Note noteExistante = noteRepository.findNoteIdEtudiantIdDevoir(idEtudiant, idDevoir);
+
+            if (noteExistante != null) {
+                noteExistante.setValeur(BigDecimal.valueOf(valeur));
+                noteRepository.save(noteExistante);
+            } else {
+                Note note = new Note();
+                note.setValeur(BigDecimal.valueOf(valeur));
+                note.setEtudiant(etudiantRepository.findEtudiantId(idEtudiant));
+                note.setDevoir(devoirRepository.findDevoirId(idDevoir));
+                noteRepository.save(note);
+            }
+
         }catch (Exception e){
             throw new RuntimeException("Erreur lors de la création de la note : "+e);
         }
@@ -79,6 +89,10 @@ public class NoteService {
 
     public List<EtudiantDevoirNoteDto> findMoyenneGenerale() {
         return noteRepository.findMoyenneGenerale();
+    }
+
+    public List<DevoirNoteDto> findNoteByDevoirId(int idDevoir) {
+        return noteRepository.findNoteByDevoirId(idDevoir);
     }
 
 

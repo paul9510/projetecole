@@ -1,5 +1,6 @@
 package com.example.projet_ecole.repositories;
 
+import com.example.projet_ecole.dto.DevoirNoteDto;
 import com.example.projet_ecole.dto.EtudiantDevoirNoteDto;
 import com.example.projet_ecole.entities.Etudiant;
 import com.example.projet_ecole.entities.Note;
@@ -48,6 +49,10 @@ public interface NoteRepository extends JpaRepository<Note, Integer> {
     // RECUPERE TOUTES LES NOTES
     @Query("select n from Note n")
     List<Note> findToutesLesNotes();
+
+    // RECUPERER LES NOTES D'UN DEVOIR
+    @Query("SELECT new com.example.projet_ecole.dto.DevoirNoteDto(e.nom, e.prenom, n.valeur) FROM Note n JOIN n.etudiant e WHERE n.devoir.id = :idDevoir")
+    List<DevoirNoteDto> findNoteByDevoirId(@Param("idDevoir") int idDevoir);
 
     // RECUPERE LE NOM PRENOM MATIERE ET SA MOYENNE POUR TOUS LES ETUDIANTS AYANT DES NOTES
     @Query("SELECT new com.example.projet_ecole.dto.EtudiantDevoirNoteDto(e.nom, e.prenom, AVG(n.valeur), n.devoir.matiere.nom) FROM Note n JOIN Etudiant e ON e.id = n.etudiant.id GROUP BY e.id, e.prenom, e.nom, n.devoir.matiere")
